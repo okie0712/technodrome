@@ -111,15 +111,15 @@ let opened = false;
 let babyGirlPulseTimer = null;
 const BABY_GIRL_TEXT = "Baby Girl";
 
-const spawnBabyGirlPop = () => {
+const spawnBabyGirlPop = (forcedLeft = null, forcedTop = null, forcedPeak = null, forcedSize = null) => {
     const pop = document.createElement("div");
     pop.className = "babyGirlPop";
     pop.textContent = BABY_GIRL_TEXT;
 
-    const left = 7 + Math.random() * 86;
-    const top = 10 + Math.random() * 76;
-    const size = 22 + Math.random() * 20;
-    const peakOpacity = 0.58 + Math.random() * 0.28;
+    const left = forcedLeft ?? (7 + Math.random() * 86);
+    const top = forcedTop ?? (10 + Math.random() * 76);
+    const size = forcedSize ?? (24 + Math.random() * 24);
+    const peakOpacity = forcedPeak ?? (0.66 + Math.random() * 0.28);
 
     pop.style.left = `${left}%`;
     pop.style.top = `${top}%`;
@@ -134,10 +134,21 @@ const spawnBabyGirlPop = () => {
 
 const startBabyGirlPulses = () => {
     if (babyGirlPulseTimer) return;
-    for (let i = 0; i < 14; i++) {
-        setTimeout(spawnBabyGirlPop, i * 70);
+    for (let i = 0; i < 24; i++) {
+        setTimeout(() => {
+            spawnBabyGirlPop();
+            if (i % 3 === 0) {
+                spawnBabyGirlPop(50, 52, 0.92, 40);
+            }
+        }, i * 55);
     }
-    babyGirlPulseTimer = setInterval(spawnBabyGirlPop, 120);
+
+    babyGirlPulseTimer = setInterval(() => {
+        spawnBabyGirlPop();
+        if (Math.random() < 0.45) {
+            spawnBabyGirlPop(50 + (Math.random() * 10 - 5), 52 + (Math.random() * 8 - 4), 0.86, 38);
+        }
+    }, 95);
 };
 
 const openHeartBreaker = () => {
