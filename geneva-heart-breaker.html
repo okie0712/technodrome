@@ -30,6 +30,10 @@
         z-index: 2;
         -webkit-user-select: none;
         user-select: none;
+        border: 0;
+        background: transparent;
+        color: white;
+        padding: 0;
     }
     .heart {
         position: absolute;
@@ -64,7 +68,7 @@
 </head>
 <body>
 
-<div id="start">Geneva! Tap here please!</div>
+<button id="start" type="button">Geneva! Tap here please!</button>
 <div id="message">
     Don’t be breaking too many hearts out there in these streets 😉
 </div>
@@ -110,7 +114,13 @@ smsLink.addEventListener("click", (event) => {
 });
 
 start.addEventListener("pointerdown", openHeartBreaker, { once: true });
+start.addEventListener("touchstart", openHeartBreaker, { once: true, passive: true });
 start.addEventListener("click", openHeartBreaker, { once: true });
+start.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+        openHeartBreaker();
+    }
+});
 </script>
 
 </body>
