@@ -66,6 +66,9 @@
     }
     #babyGirl {
         position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
         opacity: 0;
         color: #b3b3b3;
         font-size: 30px;
@@ -121,8 +124,11 @@ const openHeartBreaker = () => {
 
     setTimeout(() => {
         message.style.opacity = 0;
-        babyGirl.style.opacity = 0.22;
-    }, 2300);
+    }, 2400);
+
+    setTimeout(() => {
+        babyGirl.style.opacity = 0.24;
+    }, 2800);
 };
 
 smsLink.addEventListener("click", (event) => {
