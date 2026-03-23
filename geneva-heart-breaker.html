@@ -64,6 +64,15 @@
         text-decoration: underline;
         font-size: 16px;
     }
+    #babyGirl {
+        position: absolute;
+        opacity: 0;
+        color: #b3b3b3;
+        font-size: 30px;
+        transition: opacity 1.2s ease;
+        z-index: 3;
+        pointer-events: none;
+    }
 </style>
 </head>
 <body>
@@ -72,11 +81,13 @@
 <div id="message">
     Don’t be breaking too many hearts out there in these streets 😉
 </div>
+<div id="babyGirl">Baby Girl</div>
 <a id="smsLink" href="#">Send this as text</a>
 
 <script>
 const start = document.getElementById("start");
 const message = document.getElementById("message");
+const babyGirl = document.getElementById("babyGirl");
 const smsLink = document.getElementById("smsLink");
 const pageUrl = window.location.href.split("#")[0];
 const smsBody = `Geneva! Tap here please! ❤️ ${pageUrl}`;
@@ -107,6 +118,11 @@ const openHeartBreaker = () => {
     setTimeout(() => {
         message.style.opacity = 1;
     }, 800);
+
+    setTimeout(() => {
+        message.style.opacity = 0;
+        babyGirl.style.opacity = 0.22;
+    }, 2300);
 };
 
 smsLink.addEventListener("click", (event) => {
