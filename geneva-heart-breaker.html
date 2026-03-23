@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Geneva Heart Breaker</title>
+<style>
+    body {
+        margin: 0;
+        background: black;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        color: white;
+        font-family: Arial, sans-serif;
+        text-align: center;
+        -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
+    }
+    #start {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        cursor: pointer;
+        z-index: 2;
+        -webkit-user-select: none;
+        user-select: none;
+    }
+    .heart {
+        position: absolute;
+        color: red;
+        font-size: 20px;
+        animation: float 2s ease-out forwards;
+    }
+    @keyframes float {
+        0% { transform: scale(1) translateY(0); opacity: 1; }
+        100% { transform: scale(2) translateY(-200px); opacity: 0; }
+    }
+    #message {
+        position: absolute;
+        opacity: 0;
+        font-size: 28px;
+        transition: opacity 1.5s ease;
+        pointer-events: none;
+        width: min(92vw, 430px);
+        z-index: 3;
+    }
+    #smsLink {
+        position: fixed;
+        left: 50%;
+        bottom: 20px;
+        transform: translateX(-50%);
+        z-index: 4;
+        color: white;
+        text-decoration: underline;
+        font-size: 16px;
+    }
+</style>
+</head>
+<body>
+
+<div id="start">Geneva! Tap here please!</div>
+<div id="message">
+    Don’t be breaking too many hearts out there in these streets 😉
+</div>
+<a id="smsLink" href="#">Send this as text</a>
+
+<script>
+const start = document.getElementById("start");
+const message = document.getElementById("message");
+const smsLink = document.getElementById("smsLink");
+const pageUrl = `${window.location.origin}${window.location.pathname}`;
+const smsBody = `Geneva! Tap here please! ❤️ ${pageUrl}`;
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+const smsSeparator = isIOS ? "&" : "?";
+smsLink.href = `sms:${smsSeparator}body=${encodeURIComponent(smsBody)}`;
+let opened = false;
+
+const openHeartBreaker = () => {
+    if (opened) return;
+    opened = true;
+    start.style.display = "none";
+
+    // Create hearts explosion
+    for (let i = 0; i < 40; i++) {
+        let heart = document.createElement("div");
+        heart.className = "heart";
+        heart.innerHTML = "❤";
+        heart.style.left = Math.random() * window.innerWidth + "px";
+        heart.style.top = Math.random() * window.innerHeight + "px";
+        heart.style.fontSize = (Math.random() * 20 + 10) + "px";
+        document.body.appendChild(heart);
+
+        setTimeout(() => heart.remove(), 2000);
+    }
+
+    // Show message after delay
+    setTimeout(() => {
+        message.style.opacity = 1;
+    }, 800);
+};
+
+smsLink.addEventListener("click", (event) => {
+    event.stopPropagation();
+});
+
+start.addEventListener("pointerdown", openHeartBreaker, { once: true });
+start.addEventListener("click", openHeartBreaker, { once: true });
+</script>
+
+</body>
+</html>
