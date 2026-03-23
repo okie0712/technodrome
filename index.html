@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Technodrome</title>
+
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --fg: #eaeaea;
+      --accent: #ff0033;
+      --pulse-speed: 6s;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--fg);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .technodrome {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding-top: 12px;
+      text-align: center;
+      animation: pulse var(--pulse-speed) infinite ease-in-out;
+      z-index: 10;
+    }
+
+    .title {
+      font-size: 3rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+
+    .subtitle {
+      margin-top: 1rem;
+      font-size: 1rem;
+      opacity: 0.7;
+    }
+
+    .it-avatar-wrap {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      width: 260px;
+      height: 260px;
+      border: none;
+      background: transparent;
+      box-shadow: none;
+      z-index: 24;
+      pointer-events: none;
+      overflow: visible;
+      animation: itAvatarFloat 3.8s ease-in-out infinite, itAvatarGlow 2.6s ease-in-out infinite;
+    }
+
+    #itAvatar {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+      filter: drop-shadow(0 0 18px rgba(90, 220, 255, 0.35));
+      transition: transform 0.2s ease, filter 0.2s ease;
+    }
+
+    .it-avatar-fallback {
+      position: absolute;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      color: rgba(180, 235, 255, 0.95);
+      font-size: 34px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-shadow: 0 0 16px rgba(90, 220, 255, 0.7);
+      background: linear-gradient(180deg, rgba(20, 40, 60, 0.75), rgba(5, 10, 18, 0.75));
+    }
+
+    .it-avatar-wrap.no-image .it-avatar-fallback {
+      display: flex;
+    }
+
+    .it-avatar-wrap.speaking {
+      transform: scale(1.05);
+    }
+
+    .it-avatar-wrap.speaking #itAvatar {
+      transform: scale(1.05);
+      filter: drop-shadow(0 0 26px rgba(130, 245, 255, 0.9));
+    }
+
+    #devilShoulder {
+      position: fixed;
+      right: 245px;
+      bottom: 76px;
+      z-index: 26;
+      font-size: 44px;
+      line-height: 1;
+      opacity: 0;
+      transform: translateY(10px) scale(0.9);
+      transition: opacity 0.18s ease, transform 0.18s ease;
+      pointer-events: none;
+      filter: drop-shadow(0 0 8px rgba(255, 0, 0, 0.75));
+    }
+
+    @keyframes itAvatarFloat {
+      0% { transform: translateY(0px) scale(1); }
+      50% { transform: translateY(-8px) scale(1.01); }
+      100% { transform: translateY(0px) scale(1); }
+    }
+
+    @keyframes itAvatarGlow {
+      0% { opacity: 0.92; }
+      50% { opacity: 1; }
+      100% { opacity: 0.92; }
+    }
+
+    #halo {
+      position: fixed;
+      top: 12%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+
+      width: 240px;
+      height: 62px;
+
+      border-radius: 50%;
+      border: 5px solid rgba(255, 226, 120, 0.96);
+
+      box-shadow:
+        inset 0 0 16px rgba(255, 240, 170, 0.9),
+        0 0 18px rgba(255, 226, 120, 1),
+        0 0 42px rgba(255, 215, 0, 0.8),
+        0 0 90px rgba(255, 215, 0, 0.45);
+
+      pointer-events: none;
+      z-index: 22;
+      opacity: 0;
+      transition: left 0.08s linear, top 0.08s linear, width 0.1s linear, height 0.1s linear, transform 0.08s linear, opacity 0.12s linear;
+    }
+
+    #halo::before {
+      content: none;
+    }
+
+    #halo::after {
+      content: none;
+    }
+
+    #leprechaunBand {
+      display: none;
+    }
+
+    #leprechaunBuckle {
+      display: none;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.6; }
+      50% { opacity: 1; }
+      100% { opacity: 0.6; }
+    }
+
+    @keyframes smokeFade {
+      0% { opacity: 0.8; }
+      100% { opacity: 0; }
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="technodrome">
+    <div class="title">TECHNODROME</div>
+    <div class="subtitle">IT is online</div>
+  </div>
+
+  <div id="halo" title="Lucky hat for St. Patrick's Day"></div>
+  <div id="leprechaunBand"></div>
+  <div id="leprechaunBuckle"></div>
+  <div id="itAvatarWrap" class="it-avatar-wrap">
+    <img id="itAvatar" src="Images/IT avatar.png" alt="IT avatar" />
+    <div class="it-avatar-fallback">IT</div>
+  </div>
+  <div id="devilShoulder" aria-hidden="true">😈</div>
+
+  <video id="camera" autoplay playsinline></video>
+
+</body>
+</html>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils"></script>
+<script src="http://localhost:3000/socket.io/socket.io.js"></script>
+<script>
+  let stream;
+  let handsDetected = false;
+  let faceDetected = false;
+  let adjusting = false;
+  let lastSmokeTime = 0;
+  let haloOverlayEnabled = true;
+  let haloDistortion = { x: 0, y: 0, tilt: 0 };
+  let haloDistortionTimer = null;
+  let haloPulseTimer = null;
+  let devilShoulderTimer = null;
+  let recognition = null;
+  let IT_state = {
+    mood: "neutral",
+    intensity: 0,
+    lastAction: null
+  };
+
+  const itAvatarWrap = document.getElementById('itAvatarWrap');
+  const itAvatar = document.getElementById('itAvatar');
+  const halo = document.getElementById('halo');
+  const band = document.getElementById('leprechaunBand');
+  const buckle = document.getElementById('leprechaunBuckle');
+  const devilShoulder = document.getElementById('devilShoulder');
+  const HALO_TUNE = {
+    scale: 1.18,
+    widthFactor: 2.3,
+    minWidth: 240,
+    maxWidth: 430,
+    heightRatio: 0.26,
+    minHeight: 54,
+    maxHeight: 132,
+    yOffsetMin: 145,
+    yOffsetFactor: 1.8,
+    tiltFactor: 0.22,
+    tiltMax: 10,
+    smooth: 0.22
+  };
+  const haloState = { x: null, y: null, width: null, height: null, tilt: 0 };
+
+  function smoothValue(current, target, alpha) {
+    if (current === null || Number.isNaN(current)) return target;
+    return current + (target - current) * alpha;
+  }
+
+  function resetHaloDistortion() {
+    haloDistortion.x = 0;
+    haloDistortion.y = 0;
+    haloDistortion.tilt = 0;
+
+    if (haloDistortionTimer) {
+      clearTimeout(haloDistortionTimer);
+      haloDistortionTimer = null;
+    }
+  }
+
+  function makeHaloCrooked() {
+    haloDistortion.x = (Math.random() * 34) - 17;
+    haloDistortion.y = (Math.random() * 18) - 9;
+    haloDistortion.tilt = (Math.random() * 26) - 13;
+
+    if (haloDistortionTimer) clearTimeout(haloDistortionTimer);
+    haloDistortionTimer = setTimeout(() => {
+      resetHaloDistortion();
+    }, 3800);
+  }
+
+  function triggerHaloPulse() {
+    if (haloPulseTimer) {
+      clearTimeout(haloPulseTimer);
+      haloPulseTimer = null;
+    }
+
+    halo.style.transition = 'left 0.08s linear, top 0.08s linear, width 0.1s linear, height 0.1s linear, transform 0.08s linear, opacity 0.12s linear, box-shadow 0.2s ease, border-color 0.2s ease';
+    halo.style.borderColor = 'rgba(255, 245, 170, 1)';
+    halo.style.boxShadow = 'inset 0 0 20px rgba(255, 245, 170, 0.95), 0 0 28px rgba(255, 230, 130, 1), 0 0 60px rgba(255, 215, 0, 0.95), 0 0 120px rgba(255, 215, 0, 0.65)';
+
+    haloPulseTimer = setTimeout(() => {
+      halo.style.borderColor = '';
+      halo.style.boxShadow = '';
+      haloPulseTimer = null;
+    }, 1400);
+  }
+
+  function setAtmosphere(type) {
+    const body = document.body;
+
+    if (type === "smoke") {
+      body.style.background = "radial-gradient(#222, #000)";
+      return;
+    }
+
+    if (type === "halo") {
+      body.style.background = "radial-gradient(gold, black)";
+      return;
+    }
+
+    if (type === "chaos") {
+      body.style.background = "radial-gradient(red, black)";
+      return;
+    }
+  }
+
+  function updateState(action) {
+    IT_state.lastAction = action;
+
+    if (action === "smoke") {
+      IT_state.mood = "calm";
+      IT_state.intensity++;
+    }
+
+    if (action === "chaos") {
+      IT_state.mood = "chaotic";
+      IT_state.intensity += 2;
+    }
+
+    if (action === "halo") {
+      IT_state.mood = "pure";
+      IT_state.intensity++;
+    }
+
+    console.log("STATE:", IT_state);
+  }
+
+  function IT_speak(text) {
+    if (!window.speechSynthesis) return;
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = 0.9;
+    utterance.pitch = 0.7;
+    window.speechSynthesis.speak(utterance);
+  }
+
+  const avatarCandidates = ['Images/IT avatar.png', 'Images/it.png', 'it.png'];
+  let avatarCandidateIndex = 0;
+
+  if (itAvatar) {
+    itAvatar.addEventListener('error', () => {
+      avatarCandidateIndex += 1;
+      if (avatarCandidateIndex < avatarCandidates.length) {
+        itAvatar.src = avatarCandidates[avatarCandidateIndex];
+        return;
+      }
+
+      itAvatarWrap.classList.add('no-image');
+    });
+  }
+
+  function triggerITAvatarSpeak() {
+    itAvatarWrap.classList.add('speaking');
+    setTimeout(() => {
+      itAvatarWrap.classList.remove('speaking');
+    }, 500);
+  }
+
+  window.IT = {
+    setBg(color) {
+      document.documentElement.style.setProperty('--bg', color);
+    },
+    setAccent(color) {
+      document.documentElement.style.setProperty('--accent', color);
+    },
+    setPulse(seconds) {
+      document.documentElement.style.setProperty('--pulse-speed', seconds + 's');
+    },
+    say(text) {
+      document.querySelector('.subtitle').textContent = text;
+    },
+    goLive() {
+      document.querySelector('.title').style.color = 'lime';
+      document.querySelector('.subtitle').style.color = 'lime';
+    },
+    tuneHalo(options = {}) {
+      if (typeof options.scale === 'number') HALO_TUNE.scale = options.scale;
+      if (typeof options.yOffsetMin === 'number') HALO_TUNE.yOffsetMin = options.yOffsetMin;
+      if (typeof options.yOffsetFactor === 'number') HALO_TUNE.yOffsetFactor = options.yOffsetFactor;
+      if (typeof options.smooth === 'number') HALO_TUNE.smooth = options.smooth;
+      if (typeof options.widthFactor === 'number') HALO_TUNE.widthFactor = options.widthFactor;
+      if (typeof options.heightRatio === 'number') HALO_TUNE.heightRatio = options.heightRatio;
+    },
+    toggleHalo(enabled) {
+      haloOverlayEnabled = typeof enabled === 'boolean' ? enabled : !haloOverlayEnabled;
+      socket.emit("control", { target: "haloOverlay", enabled: haloOverlayEnabled });
+      if (!haloOverlayEnabled) {
+        halo.style.opacity = '0';
+      }
+      return haloOverlayEnabled;
+    },
+    speak(text) {
+      triggerITAvatarSpeak();
+      IT.spawnMessage(`IT: ${text}`);
+    },
+    cameraStatus() {
+      const video = document.getElementById("camera");
+      if (!video) return "no-video-element";
+      if (!stream) return "no-stream";
+      if (!video.srcObject) return "detached";
+      return "alive";
+    },
+    spawnMessage(text) {
+      const msg = document.createElement('div');
+      msg.textContent = text;
+      const styles = [
+        { color: 'lime', size: '18px' },
+        { color: 'red', size: '22px' },
+        { color: 'white', size: '16px' },
+        { color: 'yellow', size: '20px' }
+      ];
+
+      const style = styles[Math.floor(Math.random() * styles.length)];
+
+      msg.style.position = 'fixed';
+      msg.style.top = Math.random() * 80 + '%';
+      msg.style.left = Math.random() * 80 + '%';
+
+      msg.style.color = style.color;
+      msg.style.fontSize = style.size;
+      msg.style.zIndex = '999999';
+
+      msg.style.background = 'rgba(0,0,0,0.6)';
+      msg.style.padding = '6px 10px';
+      msg.style.borderRadius = '6px';
+
+      document.body.appendChild(msg);
+
+      setTimeout(() => {
+        msg.style.opacity = '0';
+        setTimeout(() => msg.remove(), 2000);
+        }, 1500);
+    }
+  };
+
+  const socket = io();
+
+  function IT_input(source, content) {
+    console.log(`[INPUT - ${source}]`, content);
+    socket.emit("chat message", {
+      user: source,
+      message: content
+    });
+  }
+
+  function ITlog(message) {
+    console.log(message);
+    socket.emit("log", message);
+  }
+
+  window.receiveChatMessage = function(user, message) {
+    IT_input(user, message);
+  };
+
+  socket.on("chat message", (data) => {
+    if (data && data.role === "it") {
+      IT_speak(data.message);
+    }
+    IT.spawnMessage(`${data.user}: ${data.message}`);
+  });
+
+  socket.on("chatMessage", (data) => {
+    IT.spawnMessage(`${data.user}: ${data.message}`);
+  });
+
+  socket.on("itResponse", (data) => {
+    IT.speak(data.message);
+  });
+
+  socket.on("control", (data) => {
+    if (!data || data.target !== "haloOverlay") return;
+    haloOverlayEnabled = !!data.enabled;
+    if (haloOverlayEnabled) {
+      triggerHaloPulse();
+    } else {
+      halo.style.opacity = '0';
+    }
+  });
+
+  socket.on("effect", (data) => {
+    const video = document.getElementById("camera");
+    if (!video) return;
+
+    // KEEP STREAM ALIVE
+    if (!video.srcObject && stream) {
+      video.srcObject = stream;
+    }
+
+    if (data.type === "chaos") {
+      updateState("chaos");
+      setAtmosphere("chaos");
+      video.style.filter = "hue-rotate(180deg)";
+      setTimeout(() => video.style.filter = "none", 2000);
+    }
+
+    if (data.type === "halo") {
+      updateState("halo");
+      setAtmosphere("halo");
+      haloOverlayEnabled = true;
+      resetHaloDistortion();
+      triggerHaloPulse();
+      video.style.boxShadow = "0 0 40px gold inset";
+      setTimeout(() => video.style.boxShadow = "none", 2000);
+    }
+
+    if (data.type === "devil") {
+      if (devilShoulder) {
+        if (devilShoulderTimer) {
+          clearTimeout(devilShoulderTimer);
+          devilShoulderTimer = null;
+        }
+
+        devilShoulder.style.opacity = '1';
+        devilShoulder.style.transform = 'translateY(0) scale(1)';
+        devilShoulderTimer = setTimeout(() => {
+          devilShoulder.style.opacity = '0';
+          devilShoulder.style.transform = 'translateY(10px) scale(0.9)';
+          devilShoulderTimer = null;
+        }, 2400);
+      }
+
+      video.style.boxShadow = "0 0 40px red inset";
+      setTimeout(() => video.style.boxShadow = "none", 2000);
+    }
+
+    if (data.type === "smoke") {
+      updateState("smoke");
+      setAtmosphere("smoke");
+      makeHaloCrooked();
+      video.style.filter = "contrast(1.2) brightness(0.8) sepia(0.4)";
+
+      const fog = document.createElement("div");
+      fog.style.position = "fixed";
+      fog.style.top = "0";
+      fog.style.left = "0";
+      fog.style.width = "100%";
+      fog.style.height = "100%";
+      fog.style.pointerEvents = "none";
+      fog.style.zIndex = "25";
+      fog.style.background = "radial-gradient(circle, rgba(255,255,255,0.1), transparent)";
+      fog.style.animation = "smokeFade 4s ease-out";
+
+      document.body.appendChild(fog);
+
+      setTimeout(() => {
+        video.style.filter = "none";
+        fog.remove();
+      }, 4000);
+    }
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+      window.receiveChatMessage('tester', 'hello');
+    }
+  });
+
+  function toViewportPoint(landmark, video) {
+    const videoAspect = video.videoWidth / video.videoHeight;
+    const viewportAspect = window.innerWidth / window.innerHeight;
+
+    let drawWidth;
+    let drawHeight;
+    let offsetX;
+    let offsetY;
+
+    if (videoAspect > viewportAspect) {
+      drawHeight = window.innerHeight;
+      drawWidth = drawHeight * videoAspect;
+      offsetX = (window.innerWidth - drawWidth) / 2;
+      offsetY = 0;
+    } else {
+      drawWidth = window.innerWidth;
+      drawHeight = drawWidth / videoAspect;
+      offsetX = 0;
+      offsetY = (window.innerHeight - drawHeight) / 2;
+    }
+
+    return {
+      x: offsetX + landmark.x * drawWidth,
+      y: offsetY + landmark.y * drawHeight
+    };
+  }
+
+  function setShoulderDevils(landmarks, video) {
+    if (!haloOverlayEnabled) {
+      halo.style.opacity = '0';
+      band.style.opacity = '0';
+      buckle.style.opacity = '0';
+      return;
+    }
+
+    if (!landmarks || !landmarks[0]) {
+      halo.style.opacity = '0';
+      band.style.opacity = '0';
+      buckle.style.opacity = '0';
+      return;
+    }
+
+    const nose = toViewportPoint(landmarks[0], video);
+    const leftEar = landmarks[7] ? toViewportPoint(landmarks[7], video) : null;
+    const rightEar = landmarks[8] ? toViewportPoint(landmarks[8], video) : null;
+    const earDistance = leftEar && rightEar
+      ? Math.hypot(rightEar.x - leftEar.x, rightEar.y - leftEar.y)
+      : 90;
+
+    const haloScale = HALO_TUNE.scale;
+    const haloWidth = Math.max(HALO_TUNE.minWidth, Math.min(HALO_TUNE.maxWidth, earDistance * HALO_TUNE.widthFactor)) * haloScale;
+    const haloHeight = Math.max(HALO_TUNE.minHeight, Math.min(HALO_TUNE.maxHeight, (haloWidth / haloScale) * HALO_TUNE.heightRatio)) * haloScale;
+    const headTiltRaw = leftEar && rightEar
+      ? Math.atan2(rightEar.y - leftEar.y, rightEar.x - leftEar.x) * (180 / Math.PI)
+      : 0;
+    const headTilt = Math.max(-HALO_TUNE.tiltMax, Math.min(HALO_TUNE.tiltMax, headTiltRaw * HALO_TUNE.tiltFactor));
+    const haloCenterX = leftEar && rightEar
+      ? (leftEar.x + rightEar.x) / 2
+      : nose.x;
+    const haloCenterY = nose.y - Math.max(HALO_TUNE.yOffsetMin, earDistance * HALO_TUNE.yOffsetFactor);
+
+    haloState.x = smoothValue(haloState.x, haloCenterX, HALO_TUNE.smooth);
+    haloState.y = smoothValue(haloState.y, haloCenterY, HALO_TUNE.smooth);
+    haloState.width = smoothValue(haloState.width, haloWidth, HALO_TUNE.smooth);
+    haloState.height = smoothValue(haloState.height, haloHeight, HALO_TUNE.smooth);
+    haloState.tilt = smoothValue(haloState.tilt, headTilt, HALO_TUNE.smooth);
+
+    halo.style.left = (haloState.x + haloDistortion.x) + 'px';
+    halo.style.top = (haloState.y + haloDistortion.y) + 'px';
+    halo.style.width = haloState.width + 'px';
+    halo.style.height = haloState.height + 'px';
+    halo.style.transform = `translate(-50%, -50%) rotate(${haloState.tilt + haloDistortion.tilt}deg)`;
+    halo.style.opacity = '1';
+
+    // Position band around the hat
+    band.style.left = haloState.x + 'px';
+    band.style.top = (haloState.y + 45) + 'px';
+    band.style.transform = `translate(-50%, -50%) rotate(${haloState.tilt}deg)`;
+    band.style.opacity = '1';
+
+    // Position buckle at the same location, adjusted for its size
+    buckle.style.left = haloState.x + 'px';
+    buckle.style.top = (haloState.y + 60) + 'px';
+    buckle.style.transform = `translate(-50%, -50%) rotate(${haloState.tilt}deg)`;
+    buckle.style.opacity = '1';
+  }
+
+  function startShoulderTracking(video) {
+    if (!window.Pose) {
+      console.error('Pose tracker failed to load');
+      return;
+    }
+
+    const pose = new Pose({
+      locateFile: file => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`
+    });
+
+    pose.setOptions({
+      modelComplexity: 1,
+      smoothLandmarks: true,
+      minDetectionConfidence: 0.5,
+      minTrackingConfidence: 0.5
+    });
+
+    pose.onResults((results) => {
+      setShoulderDevils(results.poseLandmarks, video);
+    });
+
+    const tick = async () => {
+      if (video.videoWidth) {
+        await pose.send({ image: video });
+      }
+      requestAnimationFrame(tick);
+    };
+
+    tick();
+  }
+
+  function startInputTracking(video) {
+    if (!window.Hands || !window.FaceMesh || !window.Camera) {
+      console.error('Hands/Face tracking scripts failed to load');
+      return;
+    }
+
+    const hands = new Hands({
+      locateFile: (file) =>
+        `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
+    });
+
+    hands.setOptions({
+      maxNumHands: 2,
+      minDetectionConfidence: 0.7,
+      minTrackingConfidence: 0.7
+    });
+
+    hands.onResults((results) => {
+      const handLandmarks = results.multiHandLandmarks || [];
+      handsDetected = handLandmarks.length > 0;
+    });
+
+    const faceMesh = new FaceMesh({
+      locateFile: (file) =>
+        `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`
+    });
+
+    faceMesh.setOptions({
+      maxNumFaces: 1,
+      minDetectionConfidence: 0.7,
+      minTrackingConfidence: 0.7
+    });
+
+    faceMesh.onResults((results) => {
+      const faceLandmarks = results.multiFaceLandmarks || [];
+      faceDetected = faceLandmarks.length > 0;
+    });
+
+    const camera = new Camera(video, {
+      onFrame: async () => {
+        await hands.send({ image: video });
+        await faceMesh.send({ image: video });
+      },
+      width: 640,
+      height: 480
+    });
+
+    camera.start();
+
+    setInterval(() => {
+      if (handsDetected && faceDetected) {
+        if (!adjusting) {
+          adjusting = true;
+
+          socket.emit("effect", { type: "halo" });
+
+          const audio = new Audio("halo.mp3");
+          audio.play().catch(() => {});
+
+          ITlog("Adjusting halo detected");
+        }
+      } else {
+        adjusting = false;
+      }
+    }, 200);
+
+    setInterval(() => {
+      if (handsDetected && faceDetected) {
+        const now = Date.now();
+
+        if (now - lastSmokeTime > 4000) {
+          lastSmokeTime = now;
+
+          socket.emit("effect", { type: "smoke" });
+          ITlog("Blow detected → smoke ring");
+          updateState("smoke");
+        }
+      }
+    }, 1000);
+  }
+
+  async function startCamera() {
+    stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+    const video = document.getElementById("camera");
+    video.srcObject = stream;
+
+    // 🔒 auto-recover protection
+    setInterval(() => {
+      if (!video.srcObject && stream) {
+        video.srcObject = stream;
+        console.log("Camera recovered");
+      }
+    }, 1000);
+
+    video.style.position = 'fixed';
+    video.style.top = '0';
+    video.style.left = '0';
+    video.style.width = '100vw';
+    video.style.height = '100vh';
+    video.style.objectFit = 'cover';
+    video.style.zIndex = '-1';
+
+    startShoulderTracking(video);
+    startInputTracking(video);
+  }
+
+  startCamera().catch(err => {
+    console.error("Camera error:", err);
+  });
+
+  let lastFrame = null;
+
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+
+  setInterval(() => {
+    const video = document.getElementById('camera');
+    if (!video.videoWidth) return;
+
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    ctx.drawImage(video, 0, 0);
+
+    const frame = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+
+    if (lastFrame) {
+      let diff = 0;
+
+      for (let i = 0; i < frame.length; i += 4) {
+        diff += Math.abs(frame[i] - lastFrame[i]);
+      }
+
+      // movement threshold
+      if (diff > 5000000) {
+        const reactions = [
+          "movement detected",
+          "I see you",
+          "don’t look away",
+          "stay focused",
+          "they noticed",
+          "you triggered it",
+          "keep going",
+          "pause..."
+        ];
+
+        const msg = reactions[Math.floor(Math.random() * reactions.length)];
+        IT.spawnMessage(msg);
+      }
+    }
+
+    lastFrame = frame;
+  }, 300);
+
+  setInterval(() => {
+    if (IT_state.intensity > 5) {
+      socket.emit("effect", { type: "chaos" });
+      ITlog("System overload");
+      IT_state.intensity = 0;
+    }
+  }, 5000);
+
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (SpeechRecognition) {
+    recognition = new SpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = false;
+    recognition.lang = 'en-US';
+
+    recognition.onresult = (event) => {
+      const transcript =
+        event.results[event.results.length - 1][0].transcript.toLowerCase();
+
+      IT_input("voice", transcript);
+    };
+
+    recognition.onerror = () => {};
+    recognition.onend = () => {
+      try {
+        recognition.start();
+      } catch (_) {}
+    };
+
+    setTimeout(() => {
+      try {
+        recognition.start();
+      } catch (_) {}
+    }, 1200);
+  }
+
+  console.log('IT online. Try: IT.setBg("#12001a"), IT.goLive(), receiveChatMessage("tester", "hello")');
+</script>

@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IT Console</title>
+  <style>
+    body {
+      background: black;
+      color: #9cff9c;
+      font-family: monospace;
+      padding: 12px;
+      margin: 0;
+    }
+
+    h2 {
+      margin: 0 0 10px;
+      color: #7dff7d;
+    }
+
+    .group-title {
+      margin: 12px 0 6px;
+      color: #b8ffb8;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      opacity: 0.9;
+    }
+
+    .status-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(220px, 1fr));
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .status-card {
+      border: 1px solid #1f3a1f;
+      background: #071107;
+      padding: 8px 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .status-name {
+      opacity: 0.9;
+    }
+
+    .status-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .status-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .status-main {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .toggle {
+      background: #0b1b0b;
+      color: #9cff9c;
+      border: 1px solid #2c5a2c;
+      padding: 2px 7px;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 12px;
+    }
+
+    .toggle.active {
+      border-color: #44aa44;
+      color: #c9ffc9;
+    }
+
+    .state-wrap {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      min-width: 70px;
+      justify-content: flex-end;
+    }
+
+    .state-light {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #234023;
+      box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+    }
+
+    .state-light.active {
+      background: #31ff31;
+      box-shadow: 0 0 10px rgba(49, 255, 49, 0.8);
+    }
+
+    .state-light.idle,
+    .state-light.down {
+      background: #ff4d4d;
+      box-shadow: 0 0 8px rgba(255, 77, 77, 0.5);
+    }
+
+    .state-light.off {
+      background: #6b6b6b;
+    }
+
+    .state-text {
+      min-width: 44px;
+      text-align: right;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .state-text.idle,
+    .state-text.down {
+      color: #ff5c5c;
+    }
+
+    .state-text.off {
+      color: #a2a2a2;
+    }
+
+    .meter {
+      width: 56px;
+      height: 18px;
+      border: 1px solid #2b4f2b;
+      background: #020602;
+      display: flex;
+      align-items: flex-end;
+      gap: 2px;
+      padding: 2px;
+    }
+
+    .meter .bar {
+      flex: 1;
+      height: 10%;
+      background: #0f4f0f;
+      transition: height 120ms linear, background 120ms linear;
+    }
+
+    .meter.live .bar {
+      background: #39ff39;
+    }
+
+    #log {
+      border: 1px solid #1f3a1f;
+      background: #030703;
+      padding: 8px;
+      height: 60vh;
+      overflow: auto;
+    }
+
+    .log-line {
+      margin: 0 0 4px;
+      word-break: break-word;
+    }
+
+    .log-ok {
+      color: #88ff88;
+    }
+
+    .log-bad {
+      color: #ff5c5c;
+    }
+
+    .log-info {
+      color: #d8ffd8;
+    }
+  </style>
+</head>
+<body>
+  <h2>IT Console</h2>
+
+  <div class="group-title">Core</div>
+
+  <div class="status-grid">
+    <div class="status-card">
+      <div class="status-left">
+        <div class="status-main">
+          <span class="status-name">IT Core</span>
+          <button id="coreToggle" class="toggle active">ON</button>
+        </div>
+      </div>
+      <div class="status-right">
+        <div id="coreMeter" class="meter">
+          <span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span>
+        </div>
+        <div class="state-wrap">
+          <span id="coreStateLight" class="state-light down"></span>
+          <span id="coreStateText" class="state-text down">DOWN</span>
+        </div>
+      </div>
+    </div>
+    <div class="status-card">
+      <div class="status-left">
+        <div class="status-main">
+          <span class="status-name">IT Activity</span>
+          <button id="activityToggle" class="toggle active">ON</button>
+        </div>
+      </div>
+      <div class="status-right">
+        <div id="activityMeter" class="meter">
+          <span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span>
+        </div>
+        <div class="state-wrap">
+          <span id="activityStateLight" class="state-light down"></span>
+          <span id="activityStateText" class="state-text down">DOWN</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="group-title">Effects</div>
+  <div class="status-grid">
+    <div class="status-card">
+      <div class="status-left">
+        <div class="status-main">
+          <span class="status-name">Halo Overlay</span>
+          <button id="haloToggle" class="toggle active">ON</button>
+        </div>
+      </div>
+      <div class="status-right">
+        <div id="haloMeter" class="meter">
+          <span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span>
+        </div>
+        <div class="state-wrap">
+          <span id="haloStateLight" class="state-light down"></span>
+          <span id="haloStateText" class="state-text down">DOWN</span>
+        </div>
+      </div>
+    </div>
+    <div class="status-card">
+      <div class="status-left">
+        <div class="status-main">
+          <span class="status-name">Smoke Trigger</span>
+          <button id="smokeToggle" class="toggle active">ON</button>
+        </div>
+      </div>
+      <div class="status-right">
+        <div id="smokeMeter" class="meter">
+          <span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span>
+        </div>
+        <div class="state-wrap">
+          <span id="smokeStateLight" class="state-light down"></span>
+          <span id="smokeStateText" class="state-text down">DOWN</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="log"></div>
+
+  <script src="http://localhost:3000/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io("http://localhost:3000");
+    const state = {
+      lastHalo: 0,
+      lastSmoke: 0,
+      lastActivity: 0,
+      monitors: {
+        core: true,
+        activity: true,
+        halo: true,
+        smoke: true
+      },
+      levels: {
+        core: 0,
+        activity: 0,
+        halo: 0,
+        smoke: 0
+      }
+    };
+
+    const setState = (key, mode) => {
+      const textEl = document.getElementById(`${key}StateText`);
+      const lightEl = document.getElementById(`${key}StateLight`);
+      if (!textEl || !lightEl) return;
+
+      textEl.classList.remove("idle", "down", "off");
+      lightEl.classList.remove("active", "idle", "down", "off");
+
+      if (mode === "ACTIVE") {
+        textEl.textContent = "";
+        lightEl.classList.add("active");
+        return;
+      }
+
+      if (mode === "IDLE") {
+        textEl.textContent = "Idle";
+        textEl.classList.add("idle");
+        lightEl.classList.add("idle");
+        return;
+      }
+
+      if (mode === "OFF") {
+        textEl.textContent = "OFF";
+        textEl.classList.add("off");
+        lightEl.classList.add("off");
+        return;
+      }
+
+      textEl.textContent = "DOWN";
+      textEl.classList.add("down");
+      lightEl.classList.add("down");
+    };
+
+    const setMeter = (id, level, isLive) => {
+      const meter = document.getElementById(id);
+      if (!meter) return;
+      const bars = meter.querySelectorAll(".bar");
+      meter.classList.toggle("live", isLive);
+      bars.forEach((bar, index) => {
+        const threshold = (index + 1) / bars.length;
+        const active = level >= threshold;
+        bar.style.height = active ? `${Math.max(22, level * 100)}%` : "12%";
+      });
+    };
+
+    const wireToggle = (buttonId, key) => {
+      const button = document.getElementById(buttonId);
+      if (!button) return;
+      button.addEventListener("click", () => {
+        state.monitors[key] = !state.monitors[key];
+        button.textContent = state.monitors[key] ? "ON" : "OFF";
+        button.classList.toggle("active", state.monitors[key]);
+
+        if (key === "halo") {
+          socket.emit("control", { target: "haloOverlay", enabled: state.monitors.halo });
+          log(`Halo overlay ${state.monitors.halo ? "enabled" : "disabled"}`);
+        }
+      });
+    };
+
+    const classify = (msg) => {
+      const value = String(msg).toLowerCase();
+      if (/(error|failed|refused|disconnected|offline|down|no-|can't|cannot)/.test(value)) return "log-bad";
+      if (/(connected|detected|fired|watching|up|online|effect)/.test(value)) return "log-ok";
+      return "log-info";
+    };
+
+    const log = (msg) => {
+      const div = document.getElementById("log");
+      const p = document.createElement("p");
+      p.className = `log-line ${classify(msg)}`;
+      p.textContent = msg;
+      div.prepend(p);
+
+      state.lastActivity = Date.now();
+      state.levels.activity = Math.min(1, state.levels.activity + 0.55);
+      if (String(msg).toLowerCase().includes("effect fired: halo")) {
+        state.lastHalo = Date.now();
+        state.levels.halo = 1;
+      }
+      if (String(msg).toLowerCase().includes("effect fired: smoke")) {
+        state.lastSmoke = Date.now();
+        state.levels.smoke = 1;
+      }
+    };
+
+    const refreshStatus = () => {
+      const now = Date.now();
+      const smokeRecent = now - state.lastSmoke < 12000;
+      const activityRecent = now - state.lastActivity < 10000;
+      const coreConnected = socket.connected;
+
+      const coreMode = !state.monitors.core ? "OFF" : (coreConnected ? "ACTIVE" : "DOWN");
+      const activityMode = !state.monitors.activity
+        ? "OFF"
+        : (!coreConnected ? "DOWN" : (activityRecent ? "ACTIVE" : "IDLE"));
+      const haloMode = !state.monitors.halo
+        ? "OFF"
+        : (!coreConnected ? "DOWN" : "ACTIVE");
+      const smokeMode = !state.monitors.smoke
+        ? "OFF"
+        : (!coreConnected ? "DOWN" : (smokeRecent ? "ACTIVE" : "IDLE"));
+
+      setState("core", coreMode);
+      setState("activity", activityMode);
+      setState("halo", haloMode);
+      setState("smoke", smokeMode);
+
+      if (coreMode === "ACTIVE") {
+        state.levels.core = Math.max(0.3, Math.min(1, state.levels.core + (Math.random() * 0.18)));
+      } else {
+        state.levels.core *= 0.75;
+      }
+
+      state.levels.activity *= activityMode === "ACTIVE" ? 0.88 : 0.72;
+      if (haloMode === "ACTIVE") {
+        state.levels.halo = Math.max(0.3, Math.min(1, state.levels.halo + (Math.random() * 0.16)));
+      } else {
+        state.levels.halo *= 0.7;
+      }
+      state.levels.smoke *= smokeMode === "ACTIVE" ? 0.9 : 0.7;
+
+      setMeter("coreMeter", state.levels.core, coreMode === "ACTIVE");
+      setMeter("activityMeter", state.levels.activity, activityMode === "ACTIVE");
+      setMeter("haloMeter", state.levels.halo, haloMode === "ACTIVE");
+      setMeter("smokeMeter", state.levels.smoke, smokeMode === "ACTIVE");
+    };
+
+    socket.on("log", (msg) => {
+      log(msg);
+    });
+
+    socket.on("effect", (data) => {
+      log("Effect: " + data.type);
+      if (data.type === "halo") {
+        state.lastHalo = Date.now();
+        state.levels.halo = 1;
+      }
+      if (data.type === "smoke") {
+        state.lastSmoke = Date.now();
+        state.levels.smoke = 1;
+      }
+    });
+
+    socket.on("control", (data) => {
+      if (!data || data.target !== "haloOverlay") return;
+      state.monitors.halo = !!data.enabled;
+      const haloToggle = document.getElementById("haloToggle");
+      if (haloToggle) {
+        haloToggle.textContent = state.monitors.halo ? "ON" : "OFF";
+        haloToggle.classList.toggle("active", state.monitors.halo);
+      }
+      refreshStatus();
+    });
+
+    socket.on("connect", () => {
+      log("Console connected to IT realtime core");
+      socket.emit("controlRequest", "haloOverlay");
+      refreshStatus();
+    });
+
+    socket.on("disconnect", () => {
+      log("Console disconnected from IT realtime core");
+      refreshStatus();
+    });
+
+    wireToggle("coreToggle", "core");
+    wireToggle("activityToggle", "activity");
+    wireToggle("haloToggle", "halo");
+    wireToggle("smokeToggle", "smoke");
+    setInterval(refreshStatus, 500);
+    refreshStatus();
+  </script>
+</body>
+</html>
