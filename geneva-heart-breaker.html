@@ -64,17 +64,19 @@
         text-decoration: underline;
         font-size: 16px;
     }
-    #babyGirl {
+    #babyGirlField {
         position: absolute;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-        opacity: 0;
-        color: #b3b3b3;
-        font-size: 30px;
-        transition: opacity 1.2s ease;
+        inset: 0;
         z-index: 3;
         pointer-events: none;
+    }
+    .babyGirlPop {
+        position: absolute;
+        opacity: 0;
+        color: #b3b3b3;
+        transition: opacity 0.35s ease;
+        pointer-events: none;
+        white-space: nowrap;
     }
 </style>
 </head>
@@ -84,13 +86,13 @@
 <div id="message">
     Don’t be breaking too many hearts out there in these streets 😉
 </div>
-<div id="babyGirl">Baby Girl</div>
+<div id="babyGirlField"></div>
 <a id="smsLink" href="#">Send this as text</a>
 
 <script>
 const start = document.getElementById("start");
 const message = document.getElementById("message");
-const babyGirl = document.getElementById("babyGirl");
+const babyGirlField = document.getElementById("babyGirlField");
 const smsLink = document.getElementById("smsLink");
 const pageUrl = window.location.href.split("#")[0];
 const smsBody = `Geneva! Tap here please! ❤️ ${pageUrl}`;
@@ -98,6 +100,43 @@ const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
 const smsSeparator = isIOS ? "&" : "?";
 smsLink.href = `sms:${smsSeparator}body=${encodeURIComponent(smsBody)}`;
 let opened = false;
+let babyGirlPulseTimer = null;
+
+const spawnBabyGirlPop = () => {
+    const pop = document.createElement("div");
+    pop.className = "babyGirlPop";
+    pop.textContent = "Baby Girl";
+
+    const left = 8 + Math.random() * 84;
+    const top = 10 + Math.random() * 78;
+    const size = 18 + Math.random() * 18;
+    const peakOpacity = 0.12 + Math.random() * 0.2;
+
+    pop.style.left = `${left}%`;
+    pop.style.top = `${top}%`;
+    pop.style.fontSize = `${size}px`;
+    babyGirlField.appendChild(pop);
+
+    requestAnimationFrame(() => {
+        pop.style.opacity = String(peakOpacity);
+    });
+
+    setTimeout(() => {
+        pop.style.opacity = "0";
+    }, 420);
+
+    setTimeout(() => {
+        pop.remove();
+    }, 980);
+};
+
+const startBabyGirlPulses = () => {
+    if (babyGirlPulseTimer) return;
+    for (let i = 0; i < 8; i++) {
+        setTimeout(spawnBabyGirlPop, i * 90);
+    }
+    babyGirlPulseTimer = setInterval(spawnBabyGirlPop, 170);
+};
 
 const openHeartBreaker = () => {
     if (opened) return;
@@ -127,7 +166,7 @@ const openHeartBreaker = () => {
     }, 2400);
 
     setTimeout(() => {
-        babyGirl.style.opacity = 0.24;
+        startBabyGirlPulses();
     }, 2800);
 };
 
