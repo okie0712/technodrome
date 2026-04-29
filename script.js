@@ -177,7 +177,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       } catch (error) {
         console.error("Contact form send failed:", error);
-        status.textContent = "Message failed to send. Please email me directly at tollettosuit@yahoo.com.";
+        status.textContent = "Message failed to send. Please email me directly at tollettosuit@gmail.com.";
         status.className = "form-status error";
         trackEvent("contact_form_error", { reason: "request_failed" });
       } finally {
